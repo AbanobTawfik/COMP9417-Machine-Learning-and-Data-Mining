@@ -91,7 +91,7 @@ weight = self.weights[0][:64, :] if (step != self.input_size - 1) else self.weig
 
 
 --- TO DO: calculate gradients  [1 mark]
-gradients, dW, db = self.derivatives_of_hidden_layer(previous_gradients, layer_output, numpy.concatenate((layer_input, X[:, step, :]), axis=1), weight)
+gradients, dW, db = self.derivatives_of_hidden_layer(previous_gradients, layer_output, numpy.concatenate((layer_input, X[:, step, :]), axis=1), weight) # for our inputs we make sure to concatenate the values at the index of our step
 
 --- TO DO: update weights  [2 marks]
 self.weights[0] += self.learning_rate / X.shape[0] * dW # same code to update weights
