@@ -1,6 +1,6 @@
 
-## STUDENT ID: FILL IN YOUR ID
-## STUDENT NAME: FILL IN YOUR NAME
+## STUDENT ID: z5075490
+## STUDENT NAME: Abanob Tawfik
 
 
 ## Question 2
@@ -112,6 +112,13 @@ plt.show()
 
 
 ## Question 3
+# code for part (A)
+x1s_3 = [-0.8, 3.9, 1.4, 0.1, 1.2, -2.45, -1.5, 1.2]
+x2s_3 = [1, 0.4, 1, -3.3, 2.7, 0.1, -0.5, -1.5]
+ys_3 = [1, -1, 1, -1, -1, -1, 1, 1]
+
+plt.scatter(x1s_3, x2s_3, ys_3)
+plt.show()
 
 # (c)
 # YOUR CODE HERE
@@ -138,6 +145,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_classification
+from sklearn.metrics import accuracy_score
 
 def create_dataset():
     X, y = make_classification( n_samples=1250,
@@ -156,6 +164,27 @@ def create_dataset():
 # (a)
 # YOUR CODE HERE
 
+x, y = create_dataset()
+# default of train_test_split will do randomly
+# instantiate our classifiers, put them in a list, and for each plot em ez pz
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+
+SVCModel = SVC()
+SVCModel.fit(x_train, y_train)
+LogisticModel = LogisticRegression()
+LogisticModel.fit(x_train, y_train)
+AdaBoostModel = AdaBoostClassifier()
+AdaBoostModel.fit(x_train, y_train)
+RandomForestModel = RandomForestClassifier()
+RandomForestModel.fit(x_train, y_train)
+DecisionTreeModel = DecisionTreeClassifier()
+DecisionTreeModel.fit(x_train, y_train)
+MLPCModel = MLPClassifier()
+MLPCModel.fit(x_train, y_train)
+
+all_models = [SVCModel, LogisticModel, AdaBoostModel, RandomForestModel, DecisionTreeModel, MLPCModel]
+
+
 def plotter(classifier, X, X_test, y_test, title, ax=None):
     # plot decision boundary for given classifier
     plot_step = 0.02
@@ -169,14 +198,69 @@ def plotter(classifier, X, X_test, y_test, title, ax=None):
         ax.contourf(xx, yy, Z, cmap = plt.cm.Paired)
         ax.scatter(X_test[:, 0], X_test[:, 1], c = y_test)
         ax.set_title(title)
+        ax.show()
     else:
         plt.contourf(xx, yy, Z, cmap = plt.cm.Paired)
         plt.scatter(X_test[:, 0], X_test[:, 1], c = y_test)
         plt.title(title)
+        plt.show()
 
+
+for model in (all_models):
+    plotter(model, x, x_test, y_test, type(model).__name__)
 
 # (b)
 # YOUR CODE HERE
+test_sample_size = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+models_accuracy = []
+models_timing = []
+
+# 10 iterations
+for sample_size in (test_sample_size):
+    for model in (all_models):
+        average = 0
+        time_elapsed_avg = 0
+        for i in range(10):
+            start = time.time()
+            # split our sample size based on number of values
+            # by default split data shuffle so randomised
+            x_train1, x_test1, y_train1, y_test1 = train_test_split(x, y, train_size=sample_size)
+            model.fit(x_train1, y_train1)
+            results = model.predict(x_test1)
+            # im using sklearn to find accuracy, approved by anant mathur on forums
+            # will give percentage of our accuracy not float! nicer for plotting
+            accuracy = accuracy_score(results, y_test1)*100
+            end = time.time()
+            average += accuracy/(10)
+            time_elapsed_avg +=  abs((end-start)/(10))
+        models_accuracy.append((type(model).__name__, average, sample_size))
+        models_timing.append((type(model).__name__, time_elapsed_avg, sample_size))
+
+for model in (all_models):    
+    x = []
+    y = []
+    filtered_model_tuple = [tupl for tupl in models_accuracy if (tupl[0] == (type(model).__name__))]
+    for value in (filtered_model_tuple):
+        x.append(value[2])
+        y.append(value[1])
+    plt.plot(x, y, label = (type(model).__name__))
+
+
+plt.legend()
+plt.show()
 
 # (c)
 # YOUR CODE HERE
+
+# see additions to (b) for time code, added avg time in
+for model in (all_models):    
+    x = []
+    y = []
+    filtered_model_tuple = [tupl for tupl in models_timing if (tupl[0] == (type(model).__name__))]
+    for value in (filtered_model_tuple):
+        x.append(value[2])
+        y.append(value[1])
+    plt.plot(x, y, label = (type(model).__name__))
+
+plt.legend()
+plt.show()
