@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 np.random.seed(42)       # make sure you run this line for consistency 
 x = np.random.uniform(1, 2, 100)
 y = 1.2 + 2.9 * x + 1.8 * x**2 + np.random.normal(0, 0.9, 100)
-# plt.scatter(x,y)
-# plt.show()
+plt.scatter(x,y)
+plt.show()
 
 ## (c)
 
@@ -57,17 +57,17 @@ def descent_w1(c, w, x, y):
     return sum_value
 
 
-# # uncomment for 2c, comment for 2e
-# # plotting help
-# fig, ax = plt.subplots(3,3, figsize=(10,10))
-# question_2c(alphas)
-# for i, ax in enumerate(ax.flat):
-#     # losses is a list of 9 elements. Each element is an array of length 100 storing the loss at each iteration for that particular step size
-#     ax.plot(losses_2c[i])         
-#     ax.set_title(f"step size: {alphas[i]}")	 # plot titles	
-# plt.tight_layout()      # plot formatting
-# plt.savefig("grid_plot.png")
-# plt.show()
+# uncomment for 2c, comment for 2e
+# plotting help
+fig, ax = plt.subplots(3,3, figsize=(10,10))
+question_2c(alphas)
+for i, ax in enumerate(ax.flat):
+    # losses is a list of 9 elements. Each element is an array of length 100 storing the loss at each iteration for that particular step size
+    ax.plot(losses_2c[i])         
+    ax.set_title(f"step size: {alphas[i]}")	 # plot titles	
+plt.tight_layout()      # plot formatting
+plt.savefig("grid_plot.png")
+plt.show()
 #################################################################################################################################################
 
 weight_plot = np.zeros((2,100))
@@ -79,8 +79,8 @@ def quesiton_2e():
         weight_plot[0][i] = weights_2e[0]
         weight_plot[1][i] = weights_2e[1]
         loss = loss_total(c_value_2e, weights_2e, x, y)
-        weights_2e[0] = weights_2e[0] - (0.001)*descent_w0(c_value_2e, weights_2e, x, y)
-        weights_2e[1] = weights_2e[1] - (0.001)*descent_w1(c_value_2e, weights_2e, x, y)
+        weights_2e[0] = weights_2e[0] - (0.065)*descent_w0(c_value_2e, weights_2e, x, y)
+        weights_2e[1] = weights_2e[1] - (0.065)*descent_w1(c_value_2e, weights_2e, x, y)
         losses_2e[0][i] = loss
         
 # uncomment for 2c, comment for 2e
@@ -90,18 +90,24 @@ quesiton_2e()
 print(weight_plot)
 print("______")
 print(losses_2e)
-# plt.scatter(weight_plot[0],weight_plot[1])
-# plt.set_title("w0 vs w1")
-# plt.show()
-
 for i, ax in enumerate(ax.flat):
-    # losses is a list of 9 elements. Each element is an array of length 100 storing the loss at each iteration for that particular step size
-    ax.plot(weight_plot[i])         
-    ax.set_title(f"w: {i}")	 # plot titles	
+    if(i == 0):
+        # losses is a list of 9 elements. Each element is an array of length 100 storing the loss at each iteration for that particular step size
+        ax.plot(weight_plot[0], label = 'w0')         
+        ax.plot(weight_plot[1], label = 'w1')
+        ax.legend()
+        ax.set_title(f"w0 vs w1 over 100 iterations")	 # plot titles	
+    else:
+        ax.scatter(x,y, label = 'data')
+        model = weight_plot[0][99] + weight_plot[1][99]*x
+        ax.plot(x, model, label = 'model')
+        ax.legend()
+        ax.set_title(f"model")	 # plot titles	
 
-# plt.tight_layout()      # plot formatting
-# plt.savefig("grid_plot.png")
-# plt.show()
+
+plt.tight_layout()      # plot formatting
+plt.savefig("grid_plot.png")
+plt.show()
 
 
 
